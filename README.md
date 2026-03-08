@@ -16,7 +16,7 @@ TMI version: Coming soon once the paper is published.
 
 IPMI version:
 ```bibtex
-@inproceedings{wang2025remind_ipmi,
+@inproceedings{wang2025remindIPMI,
 	title = {RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation},
 	author = {Wang, Xin and Guo, Yin and Zhang, Kaiyu and Balu, Niranjan and Mossa-Basha, Mahmud and Shapiro, Linda and Yuan, Chun},
 	year = 2026,
