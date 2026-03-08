@@ -3,8 +3,8 @@
 (Code and trained models will be released by April 30, 2026.)
 
 This repository contains the official implementation for the papers:
-- (Accepted) IEEE TMI 2026: **Unified and Semantically Grounded Domain Adaptation for Medical Image Segmentation** [arXiv](https://arxiv.org/abs/2508.08660)
-- (Published) IPMI 2025: **RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation** [arXiv](https://arxiv.org/abs/2502.10887), [Proceedings](https://link.springer.com/chapter/10.1007/978-3-031-96628-6_22)
+- IEEE TMI 2026: (RemInD v2) **Unified and Semantically Grounded Domain Adaptation for Medical Image Segmentation** [arXiv](https://arxiv.org/abs/2508.08660)
+- IPMI 2025: **RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation** [arXiv](https://arxiv.org/abs/2502.10887), [Proceedings](https://link.springer.com/chapter/10.1007/978-3-031-96628-6_22)
 
 The TMI paper is a substantially extended journal version of our IPMI paper, featuring additional methodological innovations, improved performance, and significantly expanded experimental analyses.
 
@@ -16,7 +16,7 @@ TMI version: Coming soon once the paper is published.
 
 IPMI version:
 ```bibtex
-@inproceedings{wang2025remind,
+@inproceedings{wang2025remind_ipmi,
 	title = {RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation},
 	author = {Wang, Xin and Guo, Yin and Zhang, Kaiyu and Balu, Niranjan and Mossa-Basha, Mahmud and Shapiro, Linda and Yuan, Chun},
 	year = 2026,
