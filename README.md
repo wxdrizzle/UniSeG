@@ -17,13 +17,14 @@ TMI version: Coming soon once the paper is published.
 IPMI version:
 ```bibtex
 @inproceedings{wang2025remindIPMI,
-	title = {RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation},
-	author = {Wang, Xin and Guo, Yin and Zhang, Kaiyu and Balu, Niranjan and Mossa-Basha, Mahmud and Shapiro, Linda and Yuan, Chun},
-	year = 2026,
-	booktitle = {Information Processing in Medical Imaging},
-	publisher = {Springer Nature Switzerland},
-	address = {Cham},
-	pages = {327--341},
-	editor = {Oguz, Ipek and Zhang, Shaoting and Metaxas, Dimitris N.}
+	title        = {RemInD: Remembering Anatomical Variations for Interpretable Domain Adaptive Medical Image Segmentation},
+	author       = {Wang, Xin and Guo, Yin and Zhang, Kaiyu and Balu, Niranjan and Mossa-Basha, Mahmud and Shapiro, Linda and Yuan, Chun},
+	year         = 2026,
+	booktitle    = {Information Processing in Medical Imaging},
+	publisher    = {Springer Nature Switzerland},
+	address      = {Cham},
+	pages        = {327--341},
+	isbn         = {978-3-031-96628-6},
+	editor       = {Oguz, Ipek and Zhang, Shaoting and Metaxas, Dimitris N.}
 }
 ```
