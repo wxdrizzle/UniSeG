@@ -1,0 +1,73 @@
+exp:
+    val: 
+        patients_vis: 
+            target: []
+            source: []
+    test:
+        patients_vis: 
+            target: []
+            source: []
+
+dataset:
+    version: 1.1
+    # including background
+    n_classes: 5
+    n_adj: 0
+    idx2name_class:
+        '1': spleen
+        '2': 'right kidney'
+        '3': 'left kidney'
+        '4': liver
+    dim: 2
+    mods:
+        mr: 
+            select_patients:
+                num: 30
+                rand_seed: 0
+        ct:
+            select_patients:
+                num: 35
+                rand_seed: 0
+    source:
+        mod: 'mr'
+        range_idx: 
+            train: range(25)
+            val: range(25, 30)
+            test: range(25, 30)
+    target:
+        mod: 'ct'
+        range_idx:
+            train: range(25)
+            val: range(25, 30)
+            test: range(30, 35)
+
+    preprocess:
+        equalize: False
+        normalize:
+            mr:
+                enable: True
+                # 'slice', 'subject', 'dataset'
+                wise: 'slice'
+                clip_value: null
+                clip_percent: [0, 99.5]
+                # 'min-max', '0-max', 'z-score'
+                mode: 'min-max'
+            ct:
+                enable: True
+                # 'slice', 'subject', 'dataset'
+                wise: 'slice'
+                clip_value: [0, 250]
+                clip_percent: null
+                # 'min-max', '0-max', 'z-score'
+                mode: 'min-max'
+
+    aug:
+        crop: [144, 208] # random crop size
+        crop_target: True # random crop also applied to target domain during training; if false, center crop
+        rand_bias_field: 
+            enable: False
+            prob: 0.1
+            coeff_range: [0.1, 0.3]
+        center_crop: [144, 208]
+        rand_rotation: False
+        rand_flip: False

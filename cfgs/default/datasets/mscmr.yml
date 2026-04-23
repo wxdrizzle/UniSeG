@@ -1,0 +1,54 @@
+exp:
+    val: 
+        patients_vis: 
+            target: []
+            source: []
+    test:
+        patients_vis: 
+            target: []
+            source: []
+
+dataset:
+    version: 1.1
+    # including background
+    n_classes: 4
+    n_adj: 0
+    idx2name_class:
+        '1': myo
+        '2': LV
+        '3': RV
+    dim: 2
+    hw_img: 192
+    source:
+        # namely bSSFP cine
+        mod: 'C0'
+        range_idx: 
+            train: range(1, 36)
+            val: range(36, 46)
+            test: range(36, 46)
+    target:
+        mod: 'LGE'
+        range_idx:
+            train: range(1, 46)
+            val: range(1, 6)
+            test: range(6, 46)
+
+    preprocess:
+        equalize: False
+        normalize:
+            enable: True
+            # 'slice', 'subject', 'dataset'
+            wise: 'subject'
+            # 'min-max', '0-max', 'z-score'
+            mode: 'z-score'
+
+    aug:
+        crop: 160 # random crop size
+        crop_target: True # random crop also applied to target domain during training; if false, center crop
+        rand_bias_field: 
+            enable: False
+            prob: 0.1
+            coeff_range: [0.1, 0.3]
+        center_crop: 160
+        rand_rotation: False
+        rand_flip: False

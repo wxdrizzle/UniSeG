@@ -1,0 +1,46 @@
+_meta:
+    project: domain_adaptation_seg
+    path_conda_env: /home/xin/software/anaconda3/envs/research
+exp:
+    customize_dataloader: True
+    n_workers: 16
+    source_only: False
+    train:
+        n_epochs: 9999999
+        batch_size: 8
+        optimizer:
+            name: adam
+            lr: 1e-5
+            adamw:
+                weight_decay: 1e-5
+    val:
+        batch_size: 1
+        n_epochs_once: 3
+        skip_initial_val: True
+        n_epoch_stop_after_not_better: 110
+        save_latest_model: False
+        save_key_models:
+            ema:
+                enable: False
+                alpha: 0.7
+                name_metric: 'metric_final'
+                values_metric: [0.1, 0.2, 0.9]
+        metrics:
+            psnr: False
+            ssim: False
+            l1: False
+
+    test:
+        batch_size: 1
+        save:
+            img_ori: False
+            seg_gt: False
+            seg_pred: False
+        metrics:
+            psnr: False
+            ssim: False
+            l1: False
+model:
+    losses:
+        ce:
+            ws_class: null

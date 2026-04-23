@@ -1,0 +1,412 @@
+exp:
+  name: mscmr-57_037
+  names_exp_delete: null
+  path_save: ./save
+  idx_device: 0
+  rand_seed: null
+  n_workers: 16
+  compile_model: false
+  customize_dataloader: true
+  train:
+    path_model_trained: ./pretrained_models/mscmr/remind+_source-free_stage-1.pth
+    epoch_start: 0
+    n_epochs: 9999999
+    batch_size: 70
+    use_gradscaler: false
+    save_best_model_on_val_set: false
+    save_best_model_on_test_set: true
+    optimizer:
+      name: adamw
+      lr: 0.001
+      sgd:
+        weight_decay: 0.0
+        momentum: 0.9
+        nesterov: false
+      adam:
+        weight_decay: 0.0
+      adamw:
+        weight_decay: 0.0001
+    scheduler:
+      name: null
+      cycliclr:
+        lr_base: 1.0e-05
+        lr_max: 0.001
+        mode: exp_range
+        gamma: 0.99999
+        cycle_momentum: false
+      multisteplr:
+        milestones:
+        - 10
+        - 20
+        - 30
+        - 40
+        gamma: 0.2
+      exponentiallr:
+        gamma: 0.9
+      lambdalr:
+        where:
+        - model.lambda_lr_0
+        - model.lambda_lr_1
+        - model.lambda_lr_2
+        0:
+        - null
+        - null
+        - null
+        2:
+        - null
+        - null
+        - null
+  val:
+    batch_size: 70
+    skip_initial_val: true
+    n_epochs_once: 1
+    no_val_before_epoch: 0
+    n_repeat: 1
+    save_every_model: false
+    save_every_better_model: false
+    save_latest_model: false
+    n_epoch_stop_after_not_better: 800
+    epochs_metrics_min:
+    - - -1
+    - - -0.1
+  test:
+    batch_size: 70
+    path_model_trained: null
+    n_repeat: 1
+    save:
+      img_ori: false
+      seg_gt: false
+      seg_pred: false
+      disp: false
+      seg_reg: false
+      rec_reg: false
+      rec_ori: false
+      img_reg: false
+      geodesic_seg:
+        enable: false
+        end_pairs:
+        - - - 0
+            - 0
+            - 1
+          - - 1
+            - 0
+            - 0
+        - - - 0
+            - 0
+            - 1
+          - - 0
+            - 1
+            - 0
+        - - - 1
+            - 0
+            - 0
+          - - 0
+            - 1
+            - 0
+        ns_seg:
+        - 5
+        - 5
+        - 5
+  source_only: false
+  mode: train
+model:
+  name: ours2
+  losses:
+    ce:
+      ws_class:
+      - 1.0
+      - 8.0
+      - 2.0
+      - 4.0
+    dice_ce:
+      ws:
+      - 1.0
+      - 1.0
+    focal:
+      gamma: 2.0
+      ws_class: 1/freq
+    recon:
+      ws_domain:
+      - 0.0
+      - 1.0
+      scale: learned
+      include_bgs:
+      - true
+      - true
+      bg_zeros:
+      - false
+      - false
+    recon_ncc:
+      ws_domain:
+      - 1.0
+      - 1.0
+    kl_v:
+      ws_domain:
+      - 0.0
+      - 1.0
+    v_domain_diff_region_wise:
+      subtract_mean: true
+      method: sinkhorn
+      blur: 0.2
+    kl_z:
+      ws_domain:
+      - 0.0
+      - 1.0
+    kl_c_domain_diff:
+      qc_target_from: before_post_process
+      method: wasserstein
+      wasserstein:
+        logratio_transform: false
+        blur: 0.3141593
+        scaling: 0.99
+      queue_size: 2000
+      queue_mode: append
+      cost: fisher_rao
+      schedule:
+        type: linear
+        start_end_epochs:
+        - -1
+        - 0
+    kl_atlas:
+      schedule:
+        type: linear
+        start_end_epochs:
+        - -1
+        - 0
+    kl_c_sample_unif:
+      ws_domain:
+      - 1.0
+      - 1.0
+    kl_c_batch_unif:
+      ws_domain:
+      - 1.0
+      - 1.0
+    kl_c_sample_ent:
+      ws_domain:
+      - 1.0
+      - 1.0
+    distance_qz:
+      based_on: feat
+      levels:
+      - 4
+    pos_slice:
+      ws_domain:
+      - 1.0
+      - 1.0
+    adv_enc_feat:
+      mode: levelwise
+      levels:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      alpha: 1.0
+    adv_seg:
+      alpha: 1000.0
+    diff_qc_to_mask_sim:
+      ws_domain:
+      - 1.0
+      - 0.0
+      distance_qc: fisher_rao
+      sim_mask:
+        metric: dice
+    c_dispersity:
+      mode: det_euclidean
+      ws_domain:
+      - 1.0
+      - 0.0
+    kl_dirichlet_domain_diff:
+      estimation_mode: monte_carlo
+      monte_carlo:
+        n_samples_per_dirichlet: 5000
+    kl_mix_dirichlet_neg_ent:
+      ws_domain:
+      - 1.0
+      - 1.0
+    qc_diverse_repulsive:
+      ws_domain:
+      - 1.0
+      - 0.0
+      kernel:
+        name: coulomb
+        gaussian:
+          sigma: 1.0
+        coulomb:
+          alpha: 1.0
+        laplacian:
+          sigma: 1.0
+      distance: fisher_rao
+    same_qc_rand_bias_field:
+      ws_domain:
+      - 1.0
+      - 1.0
+      metric: fisher_rao
+    same_disp_rand_bias_field:
+      ws_domain:
+      - 1.0
+      - 1.0
+      metric: mse
+    expert_usage:
+      ws_domain:
+      - 1.0
+      - 1.0
+      tau: 0.05
+    kl_c:
+      ws_domain:
+      - 0.0
+      - 1.0
+  source_free_stage_2:
+    enable: true
+    trainable:
+      anchor: false
+      encoder_style: true
+      encoder_content:
+        shallow: true
+        deep: true
+      net_c: true
+      reg: true
+      decoder_rec: true
+      decoder_seg: false
+  qzxv:
+    from: feat_reg
+    based_on: atlas
+  ws_loss:
+    dice_ce: 0.0
+    recon: 15.0
+    recon_ncc: 0.0
+    kl_v: 65.0
+    v_domain_diff_region_wise: 0.0
+    v_volume_change_domain_diff: 0.0
+    kl_z: 0.0
+    kl_c_domain_diff: 0.0
+    kl_c_sample_unif: 0.0
+    kl_c_batch_unif: 0.0
+    kl_c_sample_ent: 0.0
+    c_domain_diff_batch_mean: 0.0
+    c_domain_diff_batch_covar: 0.0
+    kl_atlas_to_geomean: 0.0
+    kl_atlas: 0.0
+    adv_enc_feat: 0.0
+    adv_seg: 0.0
+    distance_qz: 0.0
+    pos_slice: 0.0
+    pos_slice_soft_contrastive: 0.0
+    diff_qc_to_mask_sim: 0.0
+    c_dispersity: 0.0
+    kl_qc_to_standard_dirichlet: 0.0
+    kl_dirichlet_domain_diff: 0.0
+    kl_mix_dirichlet_neg_ent: 0.0
+    qc_diverse_repulsive: 0.0
+    same_qc_rand_bias_field: 0.0
+    same_disp_rand_bias_field: 0.0
+    quantize_probs_a: 0.0
+    expert_usage: 1.0
+    dice: 0.0
+    focal: 0.0
+dataset:
+  name: mscmr
+  version: 1.1
+  n_classes: 4
+  idx2name_class:
+    '1': myo
+    '2': LV
+    '3': RV
+  dim: 2
+  hw_img: 192
+  source:
+    mod: C0
+    range_idx:
+      train: range(1, 36)
+      val: range(36, 46)
+      test: range(36, 46)
+  target:
+    mod: LGE
+    range_idx:
+      train: range(1, 46)
+      val: range(1, 6)
+      test: range(6, 46)
+  preprocess:
+    equalize: false
+    normalize:
+      enable: true
+      wise: slice
+      mode: min-max
+  aug:
+    crop: 160
+    crop_target: true
+    rand_bias_field:
+      enable: false
+      prob: 0.2
+      coeff_range:
+      - 0.1
+      - 0.3
+    center_crop: 160
+    rand_rotation: true
+net:
+  n_levels: 5
+  encoder:
+    in_channels: 1
+    channels: 16
+    between_domains: same
+    norm_type: instance
+  decoder_rec:
+    between_domains: same
+    detach_decoder_input:
+    - false
+    - false
+    structure:
+      name: unet_decoder
+      unet_decoder:
+        kernel_size: 3
+  decoder_seg:
+    structure:
+      name: unet_decoder
+      unet_decoder:
+        kernel_size: 3
+  net_c:
+    between_domains: same
+    dropout: 0.0
+  reg:
+    levels:
+    - 0
+    - 2
+    - 4
+    n_blocks:
+    - 2
+    - 2
+    - 2
+    between_domains: same
+    input_from_atlas: sample
+  style_code:
+    enable: true
+    mode: AdaIN
+    adain:
+      style_dim: 128
+      classwise: false
+  atlas:
+    soft_idx: true
+    soft_idx_add_noise:
+      enable: false
+      std: 0.02
+    soft_idx_cfgs:
+      average: geometric
+      mode: avg_sample
+    freeze_grad:
+      enable: false
+      mode: periodic
+      periodic:
+        period: 10
+    num: 6
+    n_samples: -1
+    qc:
+      calc:
+        mode:
+          name: net
+        levelwise: false
+        levels:
+        - 4
+        input_includes_atlas: false
+        quantize_target: false
+      mode:
+        name: deterministic

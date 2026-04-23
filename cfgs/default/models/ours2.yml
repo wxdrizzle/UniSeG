@@ -1,0 +1,271 @@
+exp:
+    train:
+        save_best_model_on_val_set: False
+        save_best_model_on_test_set: True
+    val:
+        metrics:
+            w_bar: False
+            usage_entropy: False
+            logdet_covar_w: False
+            spearman_r_dice_vs_fr: False
+
+    test:
+        save: 
+            disp: False
+            seg_reg: False
+            rec_reg: False
+            rec_ori: False
+            img_reg: False
+            geodesic_seg: 
+                enable: False
+                end_pairs: [[[0, 0, 1], [1, 0, 0]], [[0, 0, 1], [0, 1, 0]], [[1, 0, 0], [0, 1, 0]]]
+                end_sets: []
+                n_seg: 5
+            w: False
+        metrics:
+            w_bar: False
+            usage_entropy: False
+            logdet_covar_w: False
+            spearman_r_dice_vs_fr: False
+
+model:
+    source_free_stage_2:
+        enable: False
+        trainable:
+            anchor: False
+            encoder_style: True
+            encoder_content: 
+                shallow: True 
+                deep: True 
+            net_c: True
+            reg: True
+            decoder_rec: True
+            decoder_seg: False
+
+    qzxv: 
+        from: 'feat_reg' # 'feat_reg', 'atlas'
+    ws_loss:
+        dice_ce: 1.
+        recon: 100.
+        recon_ncc: 0.
+        kl_v: 20.
+        v_domain_diff_region_wise: 0.
+        v_volume_change_domain_diff: 0.
+        kl_z: 50
+        kl_c_domain_diff: 0.
+        kl_c_sample_unif: 0.
+        kl_c_batch_unif: 0.
+        kl_c_sample_ent: 0.
+        c_domain_diff_batch_mean: 0.
+        c_domain_diff_batch_covar: 0.
+        kl_atlas_to_geomean: 0.
+        kl_atlas: 0.
+        adv_enc_feat: 0.
+        adv_seg: 0.
+        distance_qz: 0.
+        pos_slice: 0.
+        pos_slice_soft_contrastive: 0.
+        diff_qc_to_mask_sim: 0.
+        c_dispersity: 0.
+        kl_qc_to_standard_dirichlet: 0.
+        kl_dirichlet_domain_diff: 0.
+        kl_mix_dirichlet_neg_ent: 0.
+        qc_diverse_repulsive: 0.
+        same_qc_rand_bias_field: 0.
+        same_disp_rand_bias_field: 0.
+        quantize_probs_a: 0.
+        expert_usage: 0.
+        translation: 0.
+        zoom: 0.
+    losses:
+        dice_ce: 
+            ws: [1., 1.]
+        ce:
+            ws_class: null
+        focal:
+            gamma: 2.0  # Focusing parameter
+            ws_class: null  # Class weights, can be '1/freq' or a list of floats
+        recon:
+            # [source, target]
+            ws_domain: [1., 1.]
+            scale: 1. # float or 'learned'
+            # True: loss of all pixels; False: loss of non-background pixels only (for target domain, use seg result for determining background pixels)
+            include_bgs: [True, True]
+            # True: rec of bg should be zero
+            bg_zeros: [False, False]
+        recon_ncc:
+            ws_domain: [1., 1.] # [source, target]
+        kl_v:
+            ws_domain: [1., 1.] # [source, target]
+            remove_mean: False
+        v_domain_diff_region_wise:
+            subtract_mean: True
+            method: 'sinkhorn'
+            blur: 0.2
+        kl_z:
+            ws_domain: [1., 1.] # [source, target]
+        kl_c_domain_diff:
+            qc_target_from: 'before_post_process' # 'before_post_process', 'after_post_process'
+            method: 'wasserstein'
+            wasserstein:
+                logratio_transform: True
+                blur: 0.05
+                scaling: 0.5
+            queue_size: 0 # 0: use batch samples to get loss; >0: store source q(c) in queue for computing loss
+            # 'append' or  'replace_same_slice' (queue_size will be length of training samples)
+            queue_mode: 'append'
+            cost: 'l2' # 'l2', 'fisher_rao'
+            schedule:
+                type: 'linear'
+                start_end_epochs: [-1, 0] # weight becomes >0 at start_epoch and becomes cfg.model.ws_loss.xxxx at end_epoch
+        kl_atlas:
+            schedule:
+                type: 'linear'
+                start_end_epochs: [-1, 0] # weight becomes >0 at start_epoch and becomes cfg.model.ws_loss.xxxx at end_epoch
+        kl_c_sample_unif:
+            ws_domain: [1., 1.] # [source, target]
+        kl_c_batch_unif:
+            ws_domain: [1., 1.] # [source, target]
+        kl_c_sample_ent:
+            ws_domain: [1., 1.] # [source, target]
+        distance_qz:
+            based_on: 'feat' # 'feat', 'atlas'
+            levels: [4]
+        pos_slice:
+            ws_domain: [1., 1.] # [source, target]
+        adv_enc_feat:
+            mode: levelwise
+            levels: [0, 1, 2, 3, 4]
+            alpha: 1.
+        adv_seg:
+            alpha: 1.
+        diff_qc_to_mask_sim:
+            ws_domain: [1., 0.] # [source, target]
+            distance_qc: 'hellinger' # 'hellinger', 'fisher_rao'
+            sim_mask: 
+                metric: 'dice' # 'dice', 'pixel_acc'
+                 
+        c_dispersity:
+            mode: 'det_euclidean' # 'pairwise_fisher_rao', 'det_euclidean'
+            ws_domain: [1., 0.] # [source, target]
+        kl_dirichlet_domain_diff:
+            estimation_mode: 'monte_carlo' # 'monte_carlo'
+            monte_carlo:
+                n_samples_per_dirichlet: 5000
+        kl_mix_dirichlet_neg_ent:
+            ws_domain: [1., 1.] # [source, target]
+        qc_diverse_repulsive:
+            ws_domain: [1., 0.] # [source, target]
+            kernel: 
+                name: 'gaussian' # 'gaussian', 'coulomb', 'laplacian'
+                gaussian:
+                    sigma: 1.
+                coulomb:
+                    alpha: 1.
+                laplacian:
+                    sigma: 1.
+            distance: 'fisher_rao'
+        same_qc_rand_bias_field:
+            ws_domain: [1., 1.] # [source, target]
+            metric: 'fisher_rao'
+        same_disp_rand_bias_field:
+            ws_domain: [1., 1.] # [source, target]
+            metric: 'mse'
+        zoom:
+            # Target zoom = reference_radius / equivalent_radius (r = sqrt(area/pi))
+            reference_radius: 9.
+        expert_usage:
+            ws_domain: [1., 1.] # [source, target]
+            tau: 0.05
+
+net:
+    n_levels: 5
+    encoder:
+        in_channels: 1
+        # if int, it is init channel num; if list of ints, it is channel num for each level (top to bottom)
+        channels: 16
+        # same, conv_shared, separate
+        between_domains: 'same'
+        norm_type: 'batch'
+
+    decoder_rec:
+        between_domains: 'conv_shared'
+        detach_decoder_input: [False, False]
+        structure: 
+            name: 'unet_decoder'
+            unet_decoder:
+                kernel_size: 1
+
+    decoder_seg:
+        structure: 
+            name: 'unet_decoder'
+            unet_decoder:
+                kernel_size: 1
+
+
+    net_c:
+        between_domains: 'separate'
+        dropout: 0.
+
+    reg_affine:
+        enable: False
+        translation:
+            enable: False
+            # 0 ~ n_levels-1, predict for this level
+            level_predict: 3
+            remove_mean: True
+        zoom:
+            enable: False
+            isotropic: True
+            # 0 ~ n_levels-1, predict for this level
+            level_predict: 4
+
+    reg:
+        levels: [0, 2, 4]
+        # if int, it is for all levels; if list of ints, it is for each level (top to bottom)
+        n_blocks: [2, 2, 2]
+        # same, conv_shared, separate
+        between_domains: 'same'
+        input_from_atlas: 'mean' # 'mean', 'sample'
+
+
+    style_code:
+        enable: False
+        mode: 'AdaIN'
+        adain:
+            style_dim: 64
+            classwise: False
+
+    atlas:
+        soft_idx: False
+        soft_idx_add_noise:
+            enable: False
+            std: 0.02
+        soft_idx_cfgs:
+            average: 'geometric' # 'geometric', 'arithmetic'
+            mode: 'avg_sample' # 'avg_sample'(average atlases, then sample), 'sample_avg' (sample from atlases, then average)
+        freeze_grad:
+            enable: False
+            mode: 'periodic'
+            periodic:
+                period: 10
+        num: 6
+        # if int, calculate E_q(c|x) using Monte Carlo; if 'deterministic', calculate E_q(c|x) using definition
+        n_samples: 1
+        qc:
+            calc:
+                mode: 
+                    name: 'net' # 'net'
+                levelwise: False
+                levels: [4] # used only when levelwise is False
+                input_includes_atlas: False
+                quantize_target: False
+            mode:
+                # if 'deterministic', hard (one-hot) or soft (probability vector) depends on cfg.net.atlas.soft_idx
+                name: 'deterministic' # 'deterministic', 'dirichlet'
+                
+
+
+
+
+

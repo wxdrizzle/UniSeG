@@ -1,0 +1,83 @@
+_meta:
+    project: ???
+    path_conda_env: null
+
+exp:
+    name: tmp
+    names_exp_delete: null
+    path_save: ./save
+    idx_device: 0 # -1 for CPU
+    rand_seed: null
+    n_workers: 0
+    compile_model: False # for pytorch 2.0+
+    customize_dataloader: False
+
+    train:
+        path_model_trained: null
+        epoch_start: 0
+        n_epochs: 1000
+        batch_size: 10
+        use_gradscaler: False
+        save_best_model_on_val_set: True
+        save_best_model_on_test_set: False
+        optimizer:
+            name: adam
+            lr: 1e-3
+            sgd:
+                weight_decay: 0.
+                momentum: 0.9
+                nesterov: False
+            adam: 
+                weight_decay: 0.
+            adamw:
+                weight_decay: 0.
+        scheduler:
+            name: null
+            cycliclr:
+                lr_base: 1e-5
+                lr_max: 1e-3
+                mode: exp_range
+                gamma: 0.99999
+                cycle_momentum: False
+            multisteplr:
+                milestones: [10, 20, 30, 40]
+                gamma: 0.2
+            exponentiallr:
+                gamma: 0.9
+            lambdalr:
+                where: 
+                    - 'model.lambda_lr_0'
+                    - 'model.lambda_lr_1'
+                    - 'model.lambda_lr_2'
+                0: [null, null, null]
+                2: [null, null, null]
+
+
+    val:
+        batch_size: 10
+        skip_initial_val: False
+        n_epochs_once: 1
+        no_val_before_epoch: 0
+        n_repeat: 1
+        save_every_model: False
+        save_every_better_model: False
+        save_latest_model: False
+        save_key_models:
+            ema:
+                enable: False
+                alpha: 0.7
+                name_metric: 'metric_final'
+                values_metric: [0.5, 0.9]
+
+        n_epoch_stop_after_not_better: null
+        epochs_metrics_min: [[-1], [-0.1]]
+    test:
+        batch_size: 10
+        path_model_trained: null
+        n_repeat: 1
+
+model:
+    name: ???
+
+dataset:
+    name: ???
