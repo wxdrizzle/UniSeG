@@ -53,7 +53,20 @@ If you have any trouble running the code, feel free to create a Github issue and
 
 If you find our work helpful for your research, please kindly consider citing our papers.
 
-TMI version: Coming soon once the paper is published.
+TMI version: 
+```bibtex
+@ARTICLE{wang2026remindTMI,
+  author={Wang, Xin and Guo, Yin and Xia, Jiamin and Zhang, Kaiyu and Balu, Niranjan and Mossa-Basha, Mahmud and Shapiro, Linda and Yuan, Chun},
+  journal={IEEE Transactions on Medical Imaging}, 
+  title={Unified and Semantically Grounded Domain Adaptation for Medical Image Segmentation}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={1-1},
+  keywords={Adaptation models;Image segmentation;Manifolds;Anatomy;Shape;Biomedical imaging;Probabilistic logic;Deformation;Radiology;Pipelines;Disentanglement;domain adaptation;interpretability;segmentation;variational inference},
+  doi={10.1109/TMI.2026.3672802}}
+
+```
 
 IPMI version:
 ```bibtex
